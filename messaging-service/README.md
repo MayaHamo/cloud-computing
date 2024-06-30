@@ -56,7 +56,7 @@ Each entity describes a corresponding database table:
 #### `POST /messages/{recipient}?from={timestamp}` 
 get all recipient messages from a specific date</br>
 response contains: `from`, `to` timestamps.</br></br>
-_if no specific date was mentioned the response will contain all messages since the beginning with maximum of 200 messages_
+_if no specific date was mentioned the response will contain all messages since the beginning with maximum of **200** messages_
 #### `POST /messages/user/{recipient}`</br>
 `request body { "sender", "content" }`</br>
 user (sender) send a message with content to another user (recipient)
