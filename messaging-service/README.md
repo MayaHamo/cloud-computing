@@ -42,28 +42,24 @@ Each entity describes a corresponding database table:
 - `messages`
 
 ## API
-`POST /users` - register a user</br>
-`GET /users/{id}` - get user</br>
-`DELETE /users/{id}` - delete user</br>
-`POST /users/{id}/block/{blockUser}` - user {id} blocks user {blockUser}</br>
-`DELETE /users/{id}/block/{blockUser}` - user {id} unblock user {blockUser}
-</br>
-</br>
-</br>
-`POST /groups` - creates an empty group</br>
-`GET /groups/{id}` - get group</br>
-`POST /groups/{id}/add/{memberId}` - add member to group</br>
-`POST /groups/{id}/remove/{memberId}` - remove member from group
-</br>
-</br>
-</br>
-`POST /messages/{recipient}?from={timestamp}`</br>
+#### `POST /users` - register a user</br>
+#### `GET /users/{id}` - get user</br>
+#### `DELETE /users/{id}` - delete user</br>
+#### `POST /users/{id}/block/{blockUser}` - user {id} blocks user {blockUser}</br>
+#### `DELETE /users/{id}/block/{blockUser}` - user {id} unblock user {blockUser}
+***
+#### `POST /groups` - creates an empty group
+#### `GET /groups/{id}` - get group
+#### `POST /groups/{id}/add/{memberId}` - add member to group
+#### `POST /groups/{id}/remove/{memberId}` - remove member from group
+***
+#### `POST /messages/{recipient}?from={timestamp}` 
 get all recipient messages from a specific date</br>
-response contains: `from`, `to` timestamps.</br>
-_if no specific date was mentioned the response will contain all messages since the beginning with maximum of 200 messages_</br>
-`POST /messages/user/{recipient}`</br>
+response contains: `from`, `to` timestamps.</br></br>
+_if no specific date was mentioned the response will contain all messages since the beginning with maximum of 200 messages_
+#### `POST /messages/user/{recipient}`</br>
 `request body { "sender", "content" }`</br>
-user (sender) send a message with content to another user (recipient)</br>
-`POST /messages/group/{groupId}`</br>
+user (sender) send a message with content to another user (recipient)
+#### `POST /messages/group/{groupId}`</br>
 `request body { "sender", "content" }`</br> 
 user (sender) send a message with content to a group (groupId)
