@@ -27,7 +27,6 @@ Group {
 ### Message
 ```
 Message {
-    id: string
     sender: string
     recipient: string
     content: string
