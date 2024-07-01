@@ -81,7 +81,7 @@ In this cost calculation example, we will focus on the costs associated with sen
 
 
 #### DynamoDB
-According to DynamoDB Pricing for On-Demand Capacity:</br>
+According to [DynamoDB Pricing for On-Demand](https://aws.amazon.com/dynamodb/pricing/on-demand/) Capacity:</br>
 - Write Request Units (WRU)	$1.25 per million write request units
 - Read Request Units (RRU)	$0.25 per million read request units
 - Storage: 
