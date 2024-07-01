@@ -36,10 +36,24 @@ Message {
 
 ## Database Tables
 Each entity describes a corresponding database table:
-- `users`
-- `groups`
-- `messages`
+#### users
+Partition key: `id`
+#### groups
+Partition key: `id`
+#### messages
+Partition key: `recipient`</br>
+Sort key: `dateCreated`
 
+## Implementation Details
+
+#### On sending group message:
+- fetch group by id from `groups` table.
+- iterate over the group's members and store the message for each member.
+
+_Note #1: Group size is limited to 500 members (Whatsapp limit is 1024 members)._</br>
+_Note #2: Blocked user checks are performed only for direct messages, not for group messages._
+##### Possible Improvement
+The duration of sending a group message depends on the number of members in the group. To support large groups and reduce latency, we can use queues (such as `SQS`) to handle message delivery to each member asynchronously.
 ## API
 #### `POST /users` - register a user</br>
 #### `GET /users/{id}` - get user</br>
@@ -63,13 +77,18 @@ user (sender) send a message with content to another user (recipient)
 `request body { "sender", "content" }`</br> 
 user (sender) send a message with content to a group (groupId)
 
-## Scaling & Pricing
+## Scaling
+### 1000 Users
+### 10,000 Users
+### Millions of Users
+## Pricing
 ### Assumptions
 - each user sends 50 direct messages per day.
 - each user sends 20 group messages per day.
 - each user reads 100 messages per day.
 - each group has 10 members.
 - Message size = 1KB
+***
 
 ### Calculation Example: Monthly cost for 1000 users
 In this cost calculation example, we will focus on the costs associated with sending and storing messages, as the costs of creating users and groups are negligible in comparison to message handling.
@@ -77,8 +96,6 @@ In this cost calculation example, we will focus on the costs associated with sen
 - each user sends `20 * 30 (days) = 600` group messages per month.
     - in each group we have 10 members - we store `600 * 10 = 6000` messages.
 - each user reads `100 * 30 (days) = 3000` messages per month.
-
-
 
 #### DynamoDB
 According to [DynamoDB Pricing for On-Demand](https://aws.amazon.com/dynamodb/pricing/on-demand/) Capacity:</br>
@@ -104,3 +121,4 @@ In total 1.5 million (direct messages) + 3 million = 4.5 million read per month.
 </br>
 Read requests cost = $0.25 * 4.5 = $1.125
 
+#### Lambda
