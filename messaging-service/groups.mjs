@@ -1,5 +1,5 @@
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
-import { DynamoDB } from '@aws-sdk/client-dynamodb';
+import { DynamoDB, ConditionalCheckFailedException } from '@aws-sdk/client-dynamodb';
 import { randomUUID } from 'crypto';
 
 import { createEntity, getEntity, updateEntity } from './dynamo-utils.mjs';
@@ -7,7 +7,7 @@ import { ErrorData } from './errors.mjs';
 
 const dynamoDb = DynamoDBDocument.from(new DynamoDB());
 const TABLE_NAME = 'groups';
-const MAX_MEMBERS_SIZE = 100;
+const MAX_MEMBERS_SIZE = '500';
 
 /* Groups handler methods */
 export async function handleGroups(event) {
@@ -35,7 +35,14 @@ async function addMemberToGroup(groupId, memberId) {
     }
 
     const updateParams = buildUpdateParams(groupId, memberId, "ADD");
-    await updateEntity(dynamoDb, updateParams, groupId);
+    try {
+        await updateEntity(dynamoDb, updateParams, groupId);
+    } catch (error) {
+        if (error.message.includes('The conditional request failed'))  {
+            throw new ErrorData(400, `group ${groupId} has reached maximum size`)
+        }
+        throw error;
+    }
 
     return memberId;
 }
@@ -56,9 +63,12 @@ function buildUpdateParams(groupId, memberId, operation) {
         TableName: TABLE_NAME,
         Key: { id: { S: groupId } },
         UpdateExpression: `${operation} memberIds :memberId`,
+        ConditionExpression: 'size(memberIds) < :maxSize',
         ExpressionAttributeValues: {
-            ':memberId': { "SS" : [memberId] }
-        }
+            ':memberId': { "SS" : [memberId] },
+            ':maxSize': { "N": MAX_MEMBERS_SIZE}
+        },
+        ReturnValues: 'UPDATED_NEW'
     };
     
     return params;
