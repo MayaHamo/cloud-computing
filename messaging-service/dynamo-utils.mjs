@@ -76,4 +76,3 @@ export async function updateEntity(dynamoDb, params, id) {
         throw new ErrorData(500, `Error updating an item from db: ${error.message}`, error);
     } 
 }
-
