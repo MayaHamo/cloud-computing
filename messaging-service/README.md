@@ -110,7 +110,9 @@ According to [DynamoDB Pricing for On-Demand](https://aws.amazon.com/dynamodb/pr
 
 In total 7.5 million writes per month:
 - Write requests cost = $1.25 * 7.5 = $9.375
-- Storage: 7.5 million * 1KB = 7.5 GB < 10 GB => $0
+- Storage: 7.5 million * 1KB = 7.5 GB
+    - first 3 months will be because we did not reach the 25GB limit.
+    - forth month storage size will be ~30GB and the payment for the extra 5GB is $0.25 * 5 =  $1.25
 
 ##### Reads
 - read messages = `1000 (users) * 3000` = 3 million
