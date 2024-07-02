@@ -79,8 +79,11 @@ user (sender) send a message with content to a group (groupId)
 
 ## Scaling
 ### 1000 Users
+our current setup is designed to handle traffic efficiently and at a minimal cost. Utilizing on-demand capacity for DynamoDB and Lambda keeps expenses low while allowing the system to scale automatically as needed.
 ### 10,000 Users
+costs will remain relatively low thanks to AWS's pricing model based on millions of requests. However, expenses might start to increase. It's essential to monitor traffic and consider switching to provisioned capacity for DynamoDB to manage costs more effectively.</br>Auto-scaling can be configured to handle traffic spikes.
 ### Millions of Users
+the system will still scale automatically, but there's a risk of throttling - we need to manage throttling errors on the client side by implementing retry mechanisms.
 ## Pricing
 ### Assumptions
 - each user sends 50 direct messages per day.
