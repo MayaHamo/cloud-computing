@@ -4,21 +4,21 @@ import { randomUUID } from 'crypto';
 
 import { createEntity, getEntity, updateEntity } from './dynamo-utils.mjs';
 import { UnsupportedHTTPMethod, UnsupportedResource, MissingParameters, GroupMaximumSize } from './exceptions.mjs';
+import { TABLES } from './tables.mjs';
 
 const dynamoDb = DynamoDBDocument.from(new DynamoDB());
-const TABLE_NAME = 'groups';
 const MAX_MEMBERS_SIZE = '500';
 
 /* Groups handler methods */
 export async function handleGroups(event) {
     const { httpMethod, resource, pathParameters } = event;
     switch (httpMethod) {
-        case 'GET': return getEntity(TABLE_NAME, pathParameters.id);
+        case 'GET': return getEntity(TABLES.GROUPS, pathParameters.id);
         case 'POST':
             switch (resource) {
                 case '/groups':
                     const newGroup = new Group();
-                    return createEntity(dynamoDb, TABLE_NAME, newGroup);
+                    return createEntity(dynamoDb, TABLES.GROUPS, newGroup);
                 case '/groups/{id}/add/{memberId}': 
                     return addMemberToGroup(pathParameters.id, pathParameters.memberId);
                 case '/groups/{id}/remove/{memberId}':
@@ -60,7 +60,7 @@ async function removeMemberFromGroup(groupId, memberId) {
 
 function buildUpdateParams(groupId, memberId, operation) {
     const params = {
-        TableName: TABLE_NAME,
+        TableName: TABLES.GROUPS,
         Key: { id: { S: groupId } },
         UpdateExpression: `${operation} memberIds :memberId`,
         ConditionExpression: 'size(memberIds) < :maxSize',

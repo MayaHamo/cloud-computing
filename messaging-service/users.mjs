@@ -4,21 +4,21 @@ import { randomUUID } from 'crypto';
 
 import { createEntity, getEntity, deleteEntity, updateEntity } from './dynamo-utils.mjs';
 import { UnsupportedHTTPMethod, UnsupportedResource } from './exceptions.mjs';
+import { TABLES } from './tables.mjs';
 
 const dynamoDb = DynamoDBDocument.from(new DynamoDB());
-const TABLE_NAME = 'users';
 
 /* Users handler methods */
 export async function handleUsers(event) {
     const { pathParameters } = event;
     switch (event.httpMethod) {
         case 'GET': 
-            return getEntity(dynamoDb, TABLE_NAME, pathParameters.id);
+            return getEntity(dynamoDb, TABLES.USERS, pathParameters.id);
         case 'POST':
             switch (event.resource) {
                 case '/users': 
                     const newUser = new User();
-                    return createEntity(dynamoDb, TABLE_NAME, newUser);
+                    return createEntity(dynamoDb, TABLES.USERS, newUser);
                 case '/users/{id}/block/{blockUser}':
                     const { id, blockUser } = pathParameters;
                     const updateParams = buildUpdateParams(id, blockUser, "ADD");
@@ -28,7 +28,7 @@ export async function handleUsers(event) {
         case 'DELETE':
             switch (event.resource) {
                 case '/users/{id}': 
-                    return deleteEntity(dynamoDb, TABLE_NAME, pathParameters.id);
+                    return deleteEntity(dynamoDb, TABLES.USERS, pathParameters.id);
                 case '/users/{id}/block/{blockUser}':
                     const { id, blockUser } = pathParameters;
                     const updateParams = buildUpdateParams(id, blockUser, "DELETE");
@@ -42,7 +42,7 @@ export async function handleUsers(event) {
 
 function buildUpdateParams(id, userId, operation) {
     const params = {
-        TableName: TABLE_NAME,
+        TableName: TABLES.USERS,
         Key: { id: { S: id } },
         UpdateExpression: `${operation} blockedUsers :userId`,
         ExpressionAttributeValues: {

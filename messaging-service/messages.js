@@ -6,7 +6,6 @@ import { UnsupportedHTTPMethod, MissingParameters, UserBlocked } from './excepti
 import { TABLES } from './tables.mjs';
 
 const dynamoDb = DynamoDBDocument.from(new DynamoDB());
-const TABLE_NAME = 'messages';
 const MESSAGES_LIMIT = 200;
 
 /* Messages handler methods */
@@ -38,7 +37,7 @@ async function validateSender(sender, recipient) {
 
 async function storeMessage(sender, recipient, content) {
     const newMessage = new Message(sender, recipient, content);
-    return createEntity(dynamoDb, TABLE_NAME, newMessage);
+    return createEntity(dynamoDb, TABLES.MESSAGES, newMessage);
 }
 
 async function storeUserMessage(sender, recipient, content) {
@@ -70,7 +69,7 @@ async function getMessages(event) {
     const fromDate = Number(event.queryStringParameters?.from || 0);
 
     const result = await dynamoDb.query({
-        TableName: TABLE_NAME,
+        TableName: TABLES.MESSAGES,
         KeyConditionExpression: "#recipient = :recipient AND #dateCreated > :fromDate",
         ExpressionAttributeNames: {
             "#recipient": "recipient",
