@@ -130,13 +130,25 @@ Read requests cost = $0.25 * 4.5 = $1.125
 
 #### Lambda
 According to [AWS Lambda pricing](https://aws.amazon.com/lambda/pricing/):</br>
-on x86 architecture
+GB-seconds are the number of seconds your function runs for, multiplied by the amount of RAM memory consumed.</br>
+
+**calculations on x86 architecture**</br>
 
 7.5 million (Write requests) + 4.5 million (Read requests) = 12 million requests</br>
 Let's assume that the duration of each request = 100ms</br>
 12 million * 100ms = 1.2 million seconds</br>
 Current lambda memory is 512MB</br>
-=> 512MB * 12 million / 1.2 million = 
+
+##### Duration
+512MB * 1.2 million = 614,400 GB/seconds</br>
+Let's assume we are on the first 6 Billion GB-seconds / month (most expensive)</br>
+614,400 * $0.0000166667 = $10.24
+##### Requests
+$0.20 per 1M requests<br>
+
+$0.20 * 12 = $2.4
+
+
 
 #### API Gateway
 According to [API Gateway REST APIs pricing](https://aws.amazon.com/api-gateway/pricing/#REST_APIs): "First 333 million requests per month cost $3.5 per million":</br>
