@@ -46,6 +46,8 @@ Sort key: `dateCreated`
 
 ## Implementation Details
 
+### _Important Note: Deployment is only supported in the eu-central-1 (Frankfurt) region due to the use of S3 for hosting the Lambda code._
+
 #### On sending group message:
 - fetch group by id from `groups` table.
 - iterate over the group's members and store the message for each member.
