@@ -1,9 +1,8 @@
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 import { DynamoDB } from '@aws-sdk/client-dynamodb';
-import { randomUUID } from 'crypto';
 
 import { createEntity, getEntity } from './dynamo-utils.mjs';
-import { ErrorData } from './errors.mjs';
+import { UnsupportedHTTPMethod, MissingParameters, UserBlocked } from './exceptions.mjs';
 import { TABLES } from './tables.mjs';
 
 const dynamoDb = DynamoDBDocument.from(new DynamoDB());
@@ -23,17 +22,17 @@ export async function handleMessages(event) {
                     return storeUserMessage(sender, pathParameters.recipient, content);
                 case '/messages/group/{groupId}':
                     return storeGroupMessage(sender, pathParameters.groupId, content);
-                default: throw new ErrorData(400, "Unsupported resource");
+                default: throw new UnsupportedResource();
             }
 
-        default: throw new ErrorData(400, "Unsupported HTTP method");
+        default: throw new UnsupportedHTTPMethod();
     }
 };
 
 async function validateSender(sender, recipient) {
     const storedRecipient = await getEntity(dynamoDb, TABLES.USERS, recipient);
     if (storedRecipient.blockedUsers.has(sender)) {
-        throw new ErrorData(403, "Blocked");
+        throw new UserBlocked();
     }
 }
 
@@ -44,7 +43,7 @@ async function storeMessage(sender, recipient, content) {
 
 async function storeUserMessage(sender, recipient, content) {
     if (!sender || !recipient || !content) {
-        throw new ErrorData(400, "Missing parameters");
+        throw new MissingParameters();
     }
 
     validateSender(sender, recipient);
@@ -54,7 +53,7 @@ async function storeUserMessage(sender, recipient, content) {
 
 async function storeGroupMessage(sender, groupId, content) {
     if (!sender || !groupId || !content) {
-        throw new ErrorData(400, "Missing parameters");
+        throw new MissingParameters();
     }
     
     const group = await getEntity(dynamoDb, TABLES.GROUPS, groupId);
@@ -66,7 +65,7 @@ async function storeGroupMessage(sender, groupId, content) {
 async function getMessages(event) {
     const { pathParameters: { recipient }} = event;
     if (!recipient) {
-        throw new ErrorData(400, "Missing parameters");
+        throw new MissingParameters();
     }
     const fromDate = Number(event.queryStringParameters?.from || 0);
 

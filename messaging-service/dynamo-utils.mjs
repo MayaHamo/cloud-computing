@@ -1,6 +1,6 @@
 import { PutItemCommand, GetItemCommand, DeleteItemCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
-import { ErrorData } from './errors.mjs';
+import { ErrorData } from './exceptions.mjs';
 
 /* Dynamo DB handler methods */
 function valueToDynamoSyntax(value) {

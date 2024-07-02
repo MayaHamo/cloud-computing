@@ -1,8 +1,7 @@
 import { handleUsers } from './users.mjs';
 import { handleGroups } from './groups.mjs';
 import { handleMessages } from './messages.mjs';
-import { ErrorData } from './errors.mjs';
-
+import { UnsupportedResource } from './exceptions.mjs';
 
 const headers = {
     'Content-Type': 'application/json',
@@ -10,14 +9,10 @@ const headers = {
 
 export const handler = async (event) => {
     console.log('Received event:', JSON.stringify(event, null, 2));
-    const { httpMethod, path, resource, pathParameters } = event;
+    const { resource } = event;
 
-    let body;
     let response;
     let statusCode = '200';
-    const headers = {
-        'Content-Type': 'application/json',
-    };
 
     try {
         const resources = resource.split('/');
@@ -32,7 +27,7 @@ export const handler = async (event) => {
                 response = await handleMessages(event);
                 break;
             default:
-                throw new ErrorData(400, `Unsupported path ${JSON.stringify(path)}`);
+                throw new UnsupportedResource();
         }
     } catch (error) {
         statusCode = error.errorCode || '500';

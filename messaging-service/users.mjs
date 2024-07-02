@@ -3,7 +3,7 @@ import { DynamoDB } from '@aws-sdk/client-dynamodb';
 import { randomUUID } from 'crypto';
 
 import { createEntity, getEntity, deleteEntity, updateEntity } from './dynamo-utils.mjs';
-import { ErrorData } from './errors.mjs';
+import { UnsupportedHTTPMethod, UnsupportedResource } from './exceptions.mjs';
 
 const dynamoDb = DynamoDBDocument.from(new DynamoDB());
 const TABLE_NAME = 'users';
@@ -23,7 +23,7 @@ export async function handleUsers(event) {
                     const { id, blockUser } = pathParameters;
                     const updateParams = buildUpdateParams(id, blockUser, "ADD");
                     return updateEntity(dynamoDb, updateParams, id);
-                default: throw new ErrorData(400, "Unsupported resource");
+                default: throw new UnsupportedResource();
             }
         case 'DELETE':
             switch (event.resource) {
@@ -33,10 +33,10 @@ export async function handleUsers(event) {
                     const { id, blockUser } = pathParameters;
                     const updateParams = buildUpdateParams(id, blockUser, "DELETE");
                     return updateEntity(dynamoDb, updateParams, id);
-                default: throw new ErrorData(400, "Unsupported resource");
+                default: throw new UnsupportedResource();
             }
 
-        default: throw new ErrorData(400, "Unsupported HTTP method");
+        default: throw new UnsupportedHTTPMethod();
     }
 }
 

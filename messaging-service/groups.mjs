@@ -1,9 +1,9 @@
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
-import { DynamoDB, ConditionalCheckFailedException } from '@aws-sdk/client-dynamodb';
+import { DynamoDB } from '@aws-sdk/client-dynamodb';
 import { randomUUID } from 'crypto';
 
 import { createEntity, getEntity, updateEntity } from './dynamo-utils.mjs';
-import { ErrorData } from './errors.mjs';
+import { UnsupportedHTTPMethod, UnsupportedResource, MissingParameters, GroupMaximumSize } from './exceptions.mjs';
 
 const dynamoDb = DynamoDBDocument.from(new DynamoDB());
 const TABLE_NAME = 'groups';
@@ -23,15 +23,15 @@ export async function handleGroups(event) {
                     return addMemberToGroup(pathParameters.id, pathParameters.memberId);
                 case '/groups/{id}/remove/{memberId}':
                     return removeMemberFromGroup(pathParameters.id, pathParameters.memberId);
-                default: throw new ErrorData(400, "Unsupported resource");
+                default: throw new UnsupportedResource();
             }
-        default: throw new ErrorData(400, "Unsupported HTTP method");
+        default: throw new UnsupportedHTTPMethod();
     }
 }
 
 async function addMemberToGroup(groupId, memberId) {
     if (!groupId || !memberId) {
-        throw new ErrorData(400, "Missing parameters");
+        throw new MissingParameters();
     }
 
     const updateParams = buildUpdateParams(groupId, memberId, "ADD");
@@ -39,7 +39,7 @@ async function addMemberToGroup(groupId, memberId) {
         await updateEntity(dynamoDb, updateParams, groupId);
     } catch (error) {
         if (error.message.includes('The conditional request failed'))  {
-            throw new ErrorData(400, `group ${groupId} has reached maximum size`)
+            throw new GroupMaximumSize();
         }
         throw error;
     }
@@ -49,7 +49,7 @@ async function addMemberToGroup(groupId, memberId) {
 
 async function removeMemberFromGroup(groupId, memberId) {
     if (!groupId || !memberId) {
-        throw new ErrorData(400, "Missing parameters");
+        throw new MissingParameters();
     }
     
     const updateParams = buildUpdateParams(groupId, memberId, "DELETE");
