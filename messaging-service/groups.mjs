@@ -7,7 +7,7 @@ import { UnsupportedHTTPMethod, UnsupportedResource, MissingParameters, GroupMax
 import { TABLES } from './tables.mjs';
 
 const dynamoDb = DynamoDBDocument.from(new DynamoDB());
-const MAX_MEMBERS_SIZE = '500';
+const MAX_MEMBERS_SIZE = '100';
 
 /* Groups handler methods */
 export async function handleGroups(event) {

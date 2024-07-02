@@ -50,7 +50,7 @@ Sort key: `dateCreated`
 - fetch group by id from `groups` table.
 - iterate over the group's members and store the message for each member.
 
-_Note #1: Group size is limited to 500 members (Whatsapp limit is 1024 members)._</br>
+_Note #1: Group size is limited to 100 members (Whatsapp limit is 1024 members)._</br>
 _Note #2: Blocked user checks are performed only for direct messages, not for group messages._
 ##### Possible Improvement
 The duration of sending a group message depends on the number of members in the group. To support large groups and reduce latency, we can use queues (such as `SQS`) to handle message delivery to each member asynchronously.
@@ -122,3 +122,5 @@ In total 1.5 million (direct messages) + 3 million = 4.5 million read per month.
 Read requests cost = $0.25 * 4.5 = $1.125
 
 #### Lambda
+
+#### API Gateway
