@@ -1,168 +1,79 @@
 ---
 Metadata:
-  TemplateId: "arn:aws:cloudformation:eu-central-1:260423486053:generatedTemplate/1b017c7d-94d8-49bc-9bf8-e64038bb5471"
-Parameters:
-  LambdaFunction00test004e2PVCodeS3BucketOneOffWxn9:
-    NoEcho: "true"
-    Type: "String"
-    Description: "An Amazon S3 bucket in the same AWS-Region as your function. The\
-      \ bucket can be in a different AWS-account.\nThis property can be replaced with\
-      \ other exclusive properties"
-  LambdaFunction00test004e2PVCodeS3KeyOneOfw2d3d:
-    NoEcho: "true"
-    Type: "String"
-    Description: "The Amazon S3 key of the deployment package.\nThis property can\
-      \ be replaced with other exclusive properties"
+  TemplateId: "arn:aws:cloudformation:eu-central-1:260423486053:generatedTemplate/710feb3c-6c36-4cba-8d6b-3b85b115e01e"
 Resources:
-  ApiGatewayStage00default00reBj8:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::ApiGateway::Stage"
-    DeletionPolicy: "Retain"
+  UsersTable:
+    Type: AWS::DynamoDB::Table
     Properties:
-      RestApiId:
-        Ref: "ApiGatewayRestApi00p3x4o71iw5007Ocw0"
-      DeploymentId:
-        Fn::GetAtt:
-        - "ApiGatewayDeployment003xbij700SJqcg"
-        - "DeploymentId"
-      Description: "Created by AWS Lambda"
-      StageName: "default"
-      TracingEnabled: false
-      CacheClusterEnabled: false
-  LambdaPermission00functiontest00Qhm3B:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::Lambda::Permission"
-    DeletionPolicy: "Retain"
-    Properties:
-      FunctionName:
-        Fn::GetAtt:
-        - "LambdaFunction00test004e2PV"
-        - "Arn"
-      Action: "lambda:InvokeFunction"
-      SourceArn: "arn:aws:execute-api:eu-central-1:260423486053:p3x4o71iw5/*/POST/groups/*/remove/*"
-      Principal: "apigateway.amazonaws.com"
-  LambdaPermission00functiontest00oyIHy:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::Lambda::Permission"
-    DeletionPolicy: "Retain"
-    Properties:
-      FunctionName:
-        Fn::GetAtt:
-        - "LambdaFunction00test004e2PV"
-        - "Arn"
-      Action: "lambda:InvokeFunction"
-      SourceArn: "arn:aws:execute-api:eu-central-1:260423486053:p3x4o71iw5/*/DELETE/users/*"
-      Principal: "apigateway.amazonaws.com"
-  DynamoDBTable00groups00XgI8U:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::DynamoDB::Table"
-    DeletionPolicy: "Retain"
-    Properties:
-      SSESpecification:
-        SSEEnabled: false
-      TableName: "groups"
-      AttributeDefinitions:
-      - AttributeType: "S"
-        AttributeName: "id"
-      ContributorInsightsSpecification:
-        Enabled: false
-      BillingMode: "PROVISIONED"
-      PointInTimeRecoverySpecification:
-        PointInTimeRecoveryEnabled: false
+      TableName: users
       ProvisionedThroughput:
         WriteCapacityUnits: 1
         ReadCapacityUnits: 1
+      AttributeDefinitions:
+      - AttributeType: S
+        AttributeName: id
       KeySchema:
-      - KeyType: "HASH"
-        AttributeName: "id"
-      DeletionProtectionEnabled: false
-      TableClass: "STANDARD"
-      Tags: []
-      TimeToLiveSpecification:
-        Enabled: false
-  IAMManagedPolicy00policyserviceroleAWSLambdaBasicExecutionRole339158f2148c4c52aebb95d0bbd0555500IqD0y:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::IAM::ManagedPolicy"
-    DeletionPolicy: "Retain"
+        - AttributeName: id
+          KeyType: HASH
+  GroupsTable:
+    Type: AWS::DynamoDB::Table
     Properties:
-      ManagedPolicyName: "AWSLambdaBasicExecutionRole-339158f2-148c-4c52-aebb-95d0bbd05555"
-      Path: "/service-role/"
-      Description: ""
-      Groups: []
-      PolicyDocument:
-        Version: "2012-10-17"
+      TableName: groups
+      ProvisionedThroughput:
+        WriteCapacityUnits: 1
+        ReadCapacityUnits: 1
+      AttributeDefinitions:
+      - AttributeType: S
+        AttributeName: id
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+  MessagesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: messages
+      ProvisionedThroughput:
+        WriteCapacityUnits: 1
+        ReadCapacityUnits: 1
+      AttributeDefinitions:
+      - AttributeType: N
+        AttributeName: dateCreated
+      - AttributeType: S
+        AttributeName: recipient
+      KeySchema:
+        - AttributeName: recipient
+          KeyType: HASH
+        - AttributeName: dateCreated
+          KeyType: RANGE
+  MessagesAppLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
         Statement:
-        - Resource: "arn:aws:logs:eu-central-1:260423486053:*"
-          Action: "logs:CreateLogGroup"
-          Effect: "Allow"
-        - Resource:
-          - "arn:aws:logs:eu-central-1:260423486053:log-group:/aws/lambda/test:*"
-          Action:
-          - "logs:CreateLogStream"
-          - "logs:PutLogEvents"
-          Effect: "Allow"
-      Roles:
-      - Ref: "IAMRole00admintest00KXUOX"
-      Users: []
-  ApiGatewayDeployment003xbij700SJqcg:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::ApiGateway::Deployment"
-    DeletionPolicy: "Retain"
-    Properties:
-      RestApiId:
-        Ref: "ApiGatewayRestApi00p3x4o71iw5007Ocw0"
-  ApiGatewayRestApi00p3x4o71iw5007Ocw0:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::ApiGateway::RestApi"
-    DeletionPolicy: "Retain"
-    Properties:
-      ApiKeySourceType: "HEADER"
-      Description: "Created by AWS Lambda"
-      EndpointConfiguration:
-        Types:
-        - "REGIONAL"
-      DisableExecuteApiEndpoint: false
-      Name: "test-API"
-  LambdaPermission00functiontest00iKezY:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::Lambda::Permission"
-    DeletionPolicy: "Retain"
-    Properties:
-      FunctionName:
-        Fn::GetAtt:
-        - "LambdaFunction00test004e2PV"
-        - "Arn"
-      Action: "lambda:InvokeFunction"
-      SourceArn: "arn:aws:execute-api:eu-central-1:260423486053:p3x4o71iw5/*/POST/messages/*/group/*"
-      Principal: "apigateway.amazonaws.com"
-  LambdaPermission00functiontest002EIVO:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::Lambda::Permission"
-    DeletionPolicy: "Retain"
-    Properties:
-      FunctionName:
-        Fn::GetAtt:
-        - "LambdaFunction00test004e2PV"
-        - "Arn"
-      Action: "lambda:InvokeFunction"
-      SourceArn: "arn:aws:execute-api:eu-central-1:260423486053:p3x4o71iw5/*/GET/messages/*"
-      Principal: "apigateway.amazonaws.com"
-  LambdaPermission00functiontest008BEeN:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::Lambda::Permission"
-    DeletionPolicy: "Retain"
-    Properties:
-      FunctionName:
-        Fn::GetAtt:
-        - "LambdaFunction00test004e2PV"
-        - "Arn"
-      Action: "lambda:InvokeFunction"
-      SourceArn: "arn:aws:execute-api:eu-central-1:260423486053:p3x4o71iw5/*/POST/messages/user/*"
-      Principal: "apigateway.amazonaws.com"
-  LambdaFunction00test004e2PV:
-    UpdateReplacePolicy: "Retain"
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: MessagesAppLambdaPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:DeleteItem
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:Scan
+                  - dynamodb:UpdateItem
+                  - dynamodb:Query
+                Resource:
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/groups
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/messages
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/users
+  MessagesAppLambdaFunction:
     Type: "AWS::Lambda::Function"
-    DeletionPolicy: "Retain"
     Properties:
       MemorySize: 512
       Description: "A simple backend (read/write to DynamoDB) with a RESTful API endpoint\
@@ -174,14 +85,9 @@ Resources:
         UpdateRuntimeOn: "Auto"
       Handler: "index.handler"
       Code:
-        S3Bucket:
-          Ref: "LambdaFunction00test004e2PVCodeS3BucketOneOffWxn9"
-        S3Key:
-          Ref: "LambdaFunction00test004e2PVCodeS3KeyOneOfw2d3d"
-      Role:
-        Fn::GetAtt:
-        - "IAMRole00admintest00KXUOX"
-        - "Arn"
+        S3Bucket: "maya-messages-app"
+        S3Key: "test-7afbff9c-647a-45e3-b0e8-53570a27eb5b.zip"
+      Role: !GetAtt MessagesAppLambdaRole.Arn
       FileSystemConfigs: []
       FunctionName: "test"
       Runtime: "nodejs18.x"
@@ -196,207 +102,310 @@ Resources:
         Key: "lambda-console:blueprint"
       Architectures:
       - "x86_64"
-  LambdaPermission00functiontest00Ee9a6:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::Lambda::Permission"
-    DeletionPolicy: "Retain"
+  # API Gateway REST API
+  ApiGatewayRestApi:
+    Type: "AWS::ApiGateway::RestApi"
     Properties:
-      FunctionName:
-        Fn::GetAtt:
-        - "LambdaFunction00test004e2PV"
-        - "Arn"
-      Action: "lambda:InvokeFunction"
-      SourceArn: "arn:aws:execute-api:eu-central-1:260423486053:p3x4o71iw5/*/GET/users/*"
-      Principal: "apigateway.amazonaws.com"
-  LambdaPermission00functiontest00uOwux:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::Lambda::Permission"
-    DeletionPolicy: "Retain"
+      Name: "MessagesAppAPI"
+      Description: "API for Messages Application"
+      EndpointConfiguration:
+        Types:
+          - "REGIONAL"
+
+  # API Gateway resources and methods
+  ApiGatewayResourceUsers:
+    Type: "AWS::ApiGateway::Resource"
     Properties:
-      FunctionName:
-        Fn::GetAtt:
-        - "LambdaFunction00test004e2PV"
-        - "Arn"
-      Action: "lambda:InvokeFunction"
-      SourceArn: "arn:aws:execute-api:eu-central-1:260423486053:p3x4o71iw5/*/DELETE/users/*/block/*"
-      Principal: "apigateway.amazonaws.com"
-  IAMRole00admintest00KXUOX:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::IAM::Role"
-    DeletionPolicy: "Retain"
+      ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+      PathPart: "users"
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceUsersId:
+    Type: "AWS::ApiGateway::Resource"
     Properties:
-      Path: "/service-role/"
-      ManagedPolicyArns:
-      - "arn:aws:iam::260423486053:policy/service-role/AWSLambdaMicroserviceExecutionRole-38163311-3f5e-49c2-ac8c-f31c494a0529"
-      - "arn:aws:iam::260423486053:policy/service-role/AWSLambdaBasicExecutionRole-339158f2-148c-4c52-aebb-95d0bbd05555"
-      MaxSessionDuration: 3600
-      RoleName: "admin-test"
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-        - Action: "sts:AssumeRole"
-          Effect: "Allow"
-          Principal:
-            Service: "lambda.amazonaws.com"
-  LambdaPermission00functiontest00M2Heo:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::Lambda::Permission"
-    DeletionPolicy: "Retain"
+      ParentId: !Ref ApiGatewayResourceUsers
+      PathPart: "{id}"
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceUsersIdBlock:
+    Type: "AWS::ApiGateway::Resource"
     Properties:
-      FunctionName:
-        Fn::GetAtt:
-        - "LambdaFunction00test004e2PV"
-        - "Arn"
-      Action: "lambda:InvokeFunction"
-      SourceArn: "arn:aws:execute-api:eu-central-1:260423486053:p3x4o71iw5/*/POST/groups"
-      Principal: "apigateway.amazonaws.com"
-  IAMManagedPolicy00policyserviceroleAWSLambdaMicroserviceExecutionRole381633113f5e49c2ac8cf31c494a052900NYDEg:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::IAM::ManagedPolicy"
-    DeletionPolicy: "Retain"
+      ParentId: !Ref ApiGatewayResourceUsersId
+      PathPart: "block"
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceUsersIdBlockBlockUser:
+    Type: "AWS::ApiGateway::Resource"
     Properties:
-      ManagedPolicyName: "AWSLambdaMicroserviceExecutionRole-38163311-3f5e-49c2-ac8c-f31c494a0529"
-      Path: "/service-role/"
-      Description: ""
-      Groups: []
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-        - Resource: "arn:aws:dynamodb:eu-central-1:260423486053:table/*"
-          Action:
-          - "dynamodb:DeleteItem"
-          - "dynamodb:GetItem"
-          - "dynamodb:PutItem"
-          - "dynamodb:Scan"
-          - "dynamodb:UpdateItem"
-          - "dynamodb:Query"
-          Effect: "Allow"
-      Roles:
-      - Ref: "IAMRole00admintest00KXUOX"
-      Users: []
-  LambdaPermission00functiontest00zGp6t:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::Lambda::Permission"
-    DeletionPolicy: "Retain"
+      ParentId: !Ref ApiGatewayResourceUsersIdBlock
+      PathPart: "{blockUser}"
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceGroups:
+    Type: "AWS::ApiGateway::Resource"
     Properties:
-      FunctionName:
-        Fn::GetAtt:
-        - "LambdaFunction00test004e2PV"
-        - "Arn"
-      Action: "lambda:InvokeFunction"
-      SourceArn: "arn:aws:execute-api:eu-central-1:260423486053:p3x4o71iw5/*/POST/users/*/block/*"
-      Principal: "apigateway.amazonaws.com"
-  DynamoDBTable00users003LYN9:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::DynamoDB::Table"
-    DeletionPolicy: "Retain"
+      ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+      PathPart: "groups"
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceGroupsId:
+    Type: "AWS::ApiGateway::Resource"
     Properties:
-      SSESpecification:
-        SSEEnabled: false
-      TableName: "users"
-      AttributeDefinitions:
-      - AttributeType: "S"
-        AttributeName: "id"
-      ContributorInsightsSpecification:
-        Enabled: false
-      BillingMode: "PROVISIONED"
-      PointInTimeRecoverySpecification:
-        PointInTimeRecoveryEnabled: false
-      ProvisionedThroughput:
-        WriteCapacityUnits: 1
-        ReadCapacityUnits: 1
-      KeySchema:
-      - KeyType: "HASH"
-        AttributeName: "id"
-      DeletionProtectionEnabled: false
-      TableClass: "STANDARD"
-      Tags: []
-      TimeToLiveSpecification:
-        Enabled: false
-  LambdaPermission00functiontest00ebYRW:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::Lambda::Permission"
-    DeletionPolicy: "Retain"
+      ParentId: !Ref ApiGatewayResourceGroups
+      PathPart: "{id}"
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceGroupsIdAdd:
+    Type: "AWS::ApiGateway::Resource"
     Properties:
-      FunctionName:
-        Fn::GetAtt:
-        - "LambdaFunction00test004e2PV"
-        - "Arn"
-      Action: "lambda:InvokeFunction"
-      SourceArn: "arn:aws:execute-api:eu-central-1:260423486053:p3x4o71iw5/*/GET/groups/*"
-      Principal: "apigateway.amazonaws.com"
-  LambdaPermission00functiontest00PEAkS:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::Lambda::Permission"
-    DeletionPolicy: "Retain"
+      ParentId: !Ref ApiGatewayResourceGroupsId
+      PathPart: "add"
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceGroupsIdAddMemberId:
+    Type: "AWS::ApiGateway::Resource"
     Properties:
-      FunctionName:
-        Fn::GetAtt:
-        - "LambdaFunction00test004e2PV"
-        - "Arn"
-      Action: "lambda:InvokeFunction"
-      SourceArn: "arn:aws:execute-api:eu-central-1:260423486053:p3x4o71iw5/*/POST/groups/*/add/*"
-      Principal: "apigateway.amazonaws.com"
-  LambdaPermission00functiontest00tf3JX:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::Lambda::Permission"
-    DeletionPolicy: "Retain"
+      ParentId: !Ref ApiGatewayResourceGroupsIdAdd
+      PathPart: "{memberId}"
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceGroupsIdRemove:
+    Type: "AWS::ApiGateway::Resource"
     Properties:
-      FunctionName:
-        Fn::GetAtt:
-        - "LambdaFunction00test004e2PV"
-        - "Arn"
-      Action: "lambda:InvokeFunction"
-      SourceArn: "arn:aws:execute-api:eu-central-1:260423486053:p3x4o71iw5/*/POST/messages/group/*"
-      Principal: "apigateway.amazonaws.com"
-  ApiGatewayDeployment001d18sm00iqVVd:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::ApiGateway::Deployment"
-    DeletionPolicy: "Retain"
+      ParentId: !Ref ApiGatewayResourceGroupsId
+      PathPart: "remove"
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceGroupsIdRemoveMemberId:
+    Type: "AWS::ApiGateway::Resource"
     Properties:
-      RestApiId:
-        Ref: "ApiGatewayRestApi00p3x4o71iw5007Ocw0"
-      Description: "Created by AWS Lambda"
-  DynamoDBTable00messages00liD46:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::DynamoDB::Table"
-    DeletionPolicy: "Retain"
+      ParentId: !Ref ApiGatewayResourceGroupsIdRemove
+      PathPart: "{memberId}"
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceMessages:
+    Type: "AWS::ApiGateway::Resource"
     Properties:
-      SSESpecification:
-        SSEEnabled: false
-      TableName: "messages"
-      AttributeDefinitions:
-      - AttributeType: "N"
-        AttributeName: "dateCreated"
-      - AttributeType: "S"
-        AttributeName: "recipient"
-      ContributorInsightsSpecification:
-        Enabled: false
-      BillingMode: "PROVISIONED"
-      PointInTimeRecoverySpecification:
-        PointInTimeRecoveryEnabled: false
-      ProvisionedThroughput:
-        WriteCapacityUnits: 1
-        ReadCapacityUnits: 1
-      KeySchema:
-      - KeyType: "HASH"
-        AttributeName: "recipient"
-      - KeyType: "RANGE"
-        AttributeName: "dateCreated"
-      DeletionProtectionEnabled: false
-      TableClass: "STANDARD"
-      Tags: []
-      TimeToLiveSpecification:
-        Enabled: false
-  LambdaPermission00functiontest00kPQQY:
-    UpdateReplacePolicy: "Retain"
-    Type: "AWS::Lambda::Permission"
-    DeletionPolicy: "Retain"
+      ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+      PathPart: "messages"
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceMessagesRecipient:
+    Type: "AWS::ApiGateway::Resource"
     Properties:
-      FunctionName:
-        Fn::GetAtt:
-        - "LambdaFunction00test004e2PV"
-        - "Arn"
-      Action: "lambda:InvokeFunction"
-      SourceArn: "arn:aws:execute-api:eu-central-1:260423486053:p3x4o71iw5/*/POST/users"
-      Principal: "apigateway.amazonaws.com"
+      ParentId: !Ref ApiGatewayResourceMessages
+      PathPart: "{recipient}"
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceMessagesUser:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      ParentId: !Ref ApiGatewayResourceMessages
+      PathPart: "user"
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceMessagesUserRecipient:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      ParentId: !Ref ApiGatewayResourceMessagesUser
+      PathPart: "{recipient}"
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceMessagesGroup:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      ParentId: !Ref ApiGatewayResourceMessages
+      PathPart: "group"
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceMessagesGroupGroupId:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      ParentId: !Ref ApiGatewayResourceMessagesGroup
+      PathPart: "{groupId}"
+      RestApiId: !Ref ApiGatewayRestApi
+
+  # Methods for /users
+  ApiGatewayMethodUsersPost:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "POST"
+      ResourceId: !Ref ApiGatewayResourceUsers
+      RestApiId: !Ref ApiGatewayRestApi
+      Integration:
+        IntegrationHttpMethod: "POST"
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MessagesAppLambdaFunction.Arn}/invocations"
+
+  # Methods for /users/{id}
+  ApiGatewayMethodUsersIdGet:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "GET"
+      ResourceId: !Ref ApiGatewayResourceUsersId
+      RestApiId: !Ref ApiGatewayRestApi
+      Integration:
+        IntegrationHttpMethod: "POST"
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MessagesAppLambdaFunction.Arn}/invocations"
+
+  ApiGatewayMethodUsersIdDelete:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "DELETE"
+      ResourceId: !Ref ApiGatewayResourceUsersId
+      RestApiId: !Ref ApiGatewayRestApi
+      Integration:
+        IntegrationHttpMethod: "POST"
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MessagesAppLambdaFunction.Arn}/invocations"
+
+  # Methods for /users/{id}/block/{blockUser}
+  ApiGatewayMethodUsersIdBlockBlockUserPost:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "POST"
+      ResourceId: !Ref ApiGatewayResourceUsersIdBlockBlockUser
+      RestApiId: !Ref ApiGatewayRestApi
+      Integration:
+        IntegrationHttpMethod: "POST"
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MessagesAppLambdaFunction.Arn}/invocations"
+
+  ApiGatewayMethodUsersIdBlockBlockUserDelete:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "DELETE"
+      ResourceId: !Ref ApiGatewayResourceUsersIdBlockBlockUser
+      RestApiId: !Ref ApiGatewayRestApi
+      Integration:
+        IntegrationHttpMethod: "POST"
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MessagesAppLambdaFunction.Arn}/invocations"
+
+  # Methods for /groups
+  ApiGatewayMethodGroupsPost:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "POST"
+      ResourceId: !Ref ApiGatewayResourceGroups
+      RestApiId: !Ref ApiGatewayRestApi
+      Integration:
+        IntegrationHttpMethod: "POST"
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MessagesAppLambdaFunction.Arn}/invocations"
+
+  # Methods for /groups/{id}
+  ApiGatewayMethodGroupsIdGet:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "GET"
+      ResourceId: !Ref ApiGatewayResourceGroupsId
+      RestApiId: !Ref ApiGatewayRestApi
+      Integration:
+        IntegrationHttpMethod: "POST"
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MessagesAppLambdaFunction.Arn}/invocations"
+
+  # Methods for /groups/{id}/add/{memberId}
+  ApiGatewayMethodGroupsIdAddMemberIdPost:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "POST"
+      ResourceId: !Ref ApiGatewayResourceGroupsIdAddMemberId
+      RestApiId: !Ref ApiGatewayRestApi
+      Integration:
+        IntegrationHttpMethod: "POST"
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MessagesAppLambdaFunction.Arn}/invocations"
+
+  # Methods for /groups/{id}/remove/{memberId}
+  ApiGatewayMethodGroupsIdRemoveMemberIdPost:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "POST"
+      ResourceId: !Ref ApiGatewayResourceGroupsIdRemoveMemberId
+      RestApiId: !Ref ApiGatewayRestApi
+      Integration:
+        IntegrationHttpMethod: "POST"
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MessagesAppLambdaFunction.Arn}/invocations"
+
+  # Methods for /messages/{recipient}?from={timestamp}
+  ApiGatewayMethodMessagesRecipientPost:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "GET"
+      ResourceId: !Ref ApiGatewayResourceMessagesRecipient
+      RestApiId: !Ref ApiGatewayRestApi
+      Integration:
+        IntegrationHttpMethod: "POST"
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MessagesAppLambdaFunction.Arn}/invocations"
+
+  # Methods for /messages/user/{recipient}
+  ApiGatewayMethodMessagesUserRecipientPost:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "POST"
+      ResourceId: !Ref ApiGatewayResourceMessagesUserRecipient
+      RestApiId: !Ref ApiGatewayRestApi
+      Integration:
+        IntegrationHttpMethod: "POST"
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MessagesAppLambdaFunction.Arn}/invocations"
+
+  # Methods for /messages/group/{groupId}
+  ApiGatewayMethodMessagesGroupGroupIdPost:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "POST"
+      ResourceId: !Ref ApiGatewayResourceMessagesGroupGroupId
+      RestApiId: !Ref ApiGatewayRestApi
+      Integration:
+        IntegrationHttpMethod: "POST"
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MessagesAppLambdaFunction.Arn}/invocations"
+
+  MessagesAppApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: ApiGatewayMethodMessagesGroupGroupIdPost
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      StageName: Prod
+
+  ProdStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      StageName: prod
+      RestApiId: !Ref ApiGatewayRestApi
+      DeploymentId: !Ref MessagesAppApiGatewayDeployment
+      MethodSettings:
+        - HttpMethod: "*"
+          ResourcePath: "/*"
+          DataTraceEnabled: true
+  #Lambda Permissions
+  LambdaInvokePermission:
+      Type: "AWS::Lambda::Permission"
+      Properties:
+        FunctionName: !Ref MessagesAppLambdaFunction
+        Action: "lambda:InvokeFunction"
+        Principal: "apigateway.amazonaws.com"
+        SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/*
+
+Outputs:
+  ApiUrl:
+    Value: !Sub https://${ApiGatewayRestApi}.execute-api.${AWS::Region}.amazonaws.com/prod
+    Description: URL of the API Gateway
