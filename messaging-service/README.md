@@ -66,7 +66,7 @@ The duration of sending a group message depends on the number of members in the 
 #### `POST /groups/{id}/add/{memberId}` - add member to group
 #### `POST /groups/{id}/remove/{memberId}` - remove member from group
 ***
-#### `POST /messages/{recipient}?from={timestamp}` 
+#### `GET /messages/{recipient}?from={timestamp}` 
 get all recipient messages from a specific date</br>
 response contains: `from`, `to` timestamps.</br></br>
 _if no specific date was mentioned the response will contain all messages since the beginning with maximum of **200** messages_
@@ -124,5 +124,16 @@ In total 1.5 million (direct messages) + 3 million = 4.5 million read per month.
 Read requests cost = $0.25 * 4.5 = $1.125
 
 #### Lambda
+According to [AWS Lambda pricing](https://aws.amazon.com/lambda/pricing/):</br>
+on x86 architecture
+
+7.5 million (Write requests) + 4.5 million (Read requests) = 12 million requests</br>
+Let's assume that the duration of each request = 100ms</br>
+12 million * 100ms = 1.2 million seconds</br>
+Current lambda memory is 512MB</br>
+=> 512MB * 12 million / 1.2 million = 
 
 #### API Gateway
+According to [API Gateway REST APIs pricing](https://aws.amazon.com/api-gateway/pricing/#REST_APIs): "First 333 million requests per month cost $3.5 per million":</br>
+7.5 million (Write requests) + 4.5 million (Read requests) = 12 million requests</br></br>
+Requests cost = $3.5 * 12 = $42
